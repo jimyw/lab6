@@ -10,7 +10,6 @@ $(document).ready(function() {
  */
 function initializePage() {
 	$('.project a').click(addProjectDetails);
-
 	$('#colorBtn').click(randomizeColors);
 }
 
@@ -25,8 +24,18 @@ function addProjectDetails(e) {
 	var projectID = $(this).closest('.project').attr('id');
 	// get rid of 'project' from the front of the id 'project3'
 	var idNumber = projectID.substr('project'.length);
-
+        var urlToPass = '/project/'+idNumber;
+        $.get(urlToPass, renderProjDetails);
+        console.log(urlToPass);
 	console.log("User clicked on project " + idNumber);
+}
+
+function renderProjDetails(result) {
+    console.log(result);
+    var jquery_selector = '#project'+result.id+' .details';
+    var htmlText = "<a href='#'><img src='"+result.image+"' alt='Lorem Pixel Image' class='detailsImage'></a>"+"<h6>"+result.date+"</h6> <p>" + result.summary + "</p>";
+    console.log(htmlText);
+    $(jquery_selector).html(htmlText);
 }
 
 /*
@@ -35,4 +44,17 @@ function addProjectDetails(e) {
  */
 function randomizeColors(e) {
 	console.log("User clicked on color button");
+    $.get('/palette',renderColor);
+}
+
+// defining callback functions to be called for AJAX
+function renderColor(result) {
+    // result is the page in the /palette page, since the page renders a json object, result is that json object
+    var colors = result.colors.hex;
+    console.log(colors);
+    $('body').css('background-color', colors[0]);
+    $('.thumbnail').css('background-color', colors[1]);
+    $('h1, h2, h3, h4, h5, h5').css('color', colors[2]);
+    $('p').css('color', colors[3]);
+    $('.project img').css('opacity', .75);
 }
